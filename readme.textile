@@ -1,6 +1,6 @@
 # desktop
 
-Configure a KDE desktop for Elexis
+Puppet module to configure a KDE desktop for Elexis
 
 Very initial
 
