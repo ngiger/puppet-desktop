@@ -1,0 +1,9 @@
+# desktop
+
+Configure a KDE desktop for Elexis
+
+Very initial
+
+GPL
+
+

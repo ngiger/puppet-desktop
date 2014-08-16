@@ -1,0 +1,17 @@
+{
+  "name": "ngiger-desktop",
+  "version": "0.1.0",
+  "author": "ngiger",
+  "summary": "Setup Desktop for Elexis",
+  "license": "GPL",
+  "source": "https://github.com/ngiger/puppet-desktop",
+  "project_page": "https://github.com/ngiger/puppet-desktop",
+  "issues_url": "https://github.com/ngiger/puppet-desktop/issues",
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_range": ">= 1.0.0"
+    }
+  ]
+}
+
