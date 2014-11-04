@@ -35,37 +35,68 @@
 #
 # Copyright 2014 Your name here, unless otherwise noted.
 #
-class desktop {
-
-  $display_manager =  hiera('X::display_manager', false)
-  if ($display_manager) { package{$display_manager: }
-    service{$display_manager:
-      ensure  => running,
-      require => Package[$display_manager],
-    }
-  }
-
-  $window_manager =  hiera('X::window_manager', false)
-  if ($window_manager) { package{$window_manager:} }
-
-  if ( "$operatingsystem" == "Ubuntu") {
-    ensure_packages[
-      # 'gnome-control-center', 'gnome-session',
-      'libreoffice-gtk3', 'libreoffice', 'libreoffice-l10n-de', 'libreoffice-l10n-fr',
-      'firefox', 'firefox-locale-de',
-      'thunderbird',   'thunderbird-locale-de',
-      'kubuntu-desktop',
-    ]
-  } else {
-    ensure_packages['kdm',
-      'task-german-kde-desktop', 'plasma-desktop',
-      'libreoffice-gtk3', 'libreoffice', 'libreoffice-l10n-de', 'libreoffice-l10n-fr',
-      'iceweasel', 'iceweasel-l10n-de',
-      'icedove',   'icedove-l10n-de',
-    ]
-  }
-  ensure_packages['kdm','libreoffice-kde', 
-    'nemo',
-    'openjdk-7-jdk',
+class desktop(
+  $ensure = false,
+  $display_manager  = 'kdm',
+  $window_manager   = 'awesome',
+  $language         = 'de_CH',
+  $lang             = 'de_CH:UTF-8',
+  $lc_messages      = 'POSIX', # display system messages in english
+  $desktop_packages = [
+  'libreoffice', 'libreoffice-l10n-de', 'libreoffice-kde',
+  'mythes-de-ch', # swiss german dictionary
+  'gnucash', 'lyx',
+   # 'iceweasel', 'iceweasel-l10n-de',
+   # 'icedove',   'icedove-l10n-de',     # for debian
+  'thunderbird', 'thunderbird-locale-de',  # for ubuntu
+  'firefox-locale-de', 'firefox',
+  'chromium-browser', 'webaccounts-chromium-extension', 'nemo', 'openjdk-7-jdk',
+  'manpages-de',
   ]
+      ) {
+
+  if ($ensure) {
+    if ($display_manager) {
+      ensure_packages( $desktop_packages)
+      ensure_packages( [$display_manager ] )
+      service{$display_manager:
+        ensure  => running,
+        require => Package[$display_manager],
+      }
+    }
+
+    ensure_packages($window_manager)
+
+    if ( "$operatingsystem" == "Ubuntu") {
+      ensure_packages[
+        # 'gnome-control-center', 'gnome-session',
+        'libreoffice-gtk3', 'libreoffice', 'libreoffice-l10n-de', 'libreoffice-l10n-fr',
+        'firefox', 'firefox-locale-de',
+        'thunderbird',   'thunderbird-locale-de',
+        'kubuntu-desktop',
+      ]
+    } else {
+      ensure_packages['kdm',
+        'task-german-kde-desktop', 'plasma-desktop',
+        'libreoffice-gtk3', 'libreoffice', 'libreoffice-l10n-de', 'libreoffice-l10n-fr',
+        'iceweasel', 'iceweasel-l10n-de',
+        'icedove',   'icedove-l10n-de',
+      ]
+    }
+    ensure_packages['kdm','libreoffice-kde',
+      'nemo',
+      'openjdk-7-jdk',
+    ]
+    }
+    file{'/etc/default/locale':
+      content => "# managed by puppet/desktop/manifests/init.pp
+LANG='$lang'
+LANGUAGE=$language
+LC_MESSAGES=$lc_messages
+",
+    }
+    exec{'update_locale':
+      command => "/usr/sbin/locale-gen $lang",
+      subscribe => File['/etc/default/locale'],
+    }
 }

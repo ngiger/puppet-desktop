@@ -1,0 +1,8 @@
+fixtures:
+  forge_modules:
+    apt: "puppetlabs/apt"
+    stdlib:    
+      repo: "puppetlabs/stdlib"
+      ref: ">= 4.3.2"
+  symlinks:
+    desktop: "#{source_dir}"

@@ -1,7 +1,13 @@
-require 'rubygems'
-require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint/tasks/puppet-lint'
+require 'puppetlabs_spec_helper/rake_tasks'
+require 'puppetlabs_spec_helper/module_spec_helper'
+require 'puppetlabs_spec_helper/puppetlabs_spec_helper'
+require 'puppet-syntax/tasks/puppet-syntax'
+require 'hiera'
+
+# PuppetLint.configuration.fail_on_warnings
 PuppetLint.configuration.send('disable_80chars')
+PuppetLint.configuration.send('disable_autoloader_layout')
 PuppetLint.configuration.ignore_paths = ["spec/**/*.pp", "pkg/**/*.pp"]
 
 desc "Validate manifests, templates, and ruby files"
@@ -16,3 +22,6 @@ task :validate do
     sh "erb -P -x -T '-' #{template} | ruby -c"
   end
 end
+
+desc "Run validate, syntax and spec_standalone"
+task :test  => [ :validate, :syntax, :spec_standalone]

@@ -1,0 +1,1 @@
+class {'desktop': ensure => absent }
