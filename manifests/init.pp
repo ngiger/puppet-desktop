@@ -34,18 +34,24 @@
 # === Copyright
 #
 # Copyright 2014 Your name here, unless otherwise noted.
-#
+
+# TODO: Set console keymap  /etc/default/keyboard
+# TODO: provide a way to hide users in the login, e.g. set hidden-users=nobody nobody4 noaccess in  /etc/lightdm/users.conf
+# TODO: Use preseed for booting a CD
+#   https://help.ubuntu.com/14.04/installation-guide/i386/preseed-contents.html
+#   https://help.ubuntu.com/14.04/installation-guide/amd64/apbs02.html
 class desktop(
   $ensure = false,
   $display_manager  = 'kdm',
   $window_manager   = 'awesome',
   $language         = 'de_CH',
-  $lang             = 'de_CH:UTF-8',
+  $lang             = 'de_CH.UTF8',
   $lc_messages      = 'POSIX', # display system messages in english
   $desktop_packages = [
   'libreoffice', 'libreoffice-l10n-de', 'libreoffice-kde',
   'mythes-de-ch', # swiss german dictionary
-  'gnucash', 'lyx',
+  'gnucash',
+   # 'lyx',
    # 'iceweasel', 'iceweasel-l10n-de',
    # 'icedove',   'icedove-l10n-de',     # for debian
   'thunderbird', 'thunderbird-locale-de',  # for ubuntu
@@ -54,14 +60,15 @@ class desktop(
   'manpages-de',
   ]
       ) {
-
   if ($ensure) {
     if ($display_manager) {
       ensure_packages( $desktop_packages)
       ensure_packages( [$display_manager ] )
-      service{$display_manager:
-        ensure  => running,
-        require => Package[$display_manager],
+      unless ($display_manager == 'unity') {
+        service{$display_manager:
+          ensure  => running,
+          require => Package[$display_manager],
+        }
       }
     }
 
@@ -73,7 +80,7 @@ class desktop(
         'libreoffice-gtk3', 'libreoffice', 'libreoffice-l10n-de', 'libreoffice-l10n-fr',
         'firefox', 'firefox-locale-de',
         'thunderbird',   'thunderbird-locale-de',
-        'kubuntu-desktop',
+        'unity',
       ]
     } else {
       ensure_packages['kdm',
@@ -81,6 +88,7 @@ class desktop(
         'libreoffice-gtk3', 'libreoffice', 'libreoffice-l10n-de', 'libreoffice-l10n-fr',
         'iceweasel', 'iceweasel-l10n-de',
         'icedove',   'icedove-l10n-de',
+        'kubuntu-desktop',
       ]
     }
     ensure_packages['kdm','libreoffice-kde',
@@ -95,8 +103,9 @@ LANGUAGE=$language
 LC_MESSAGES=$lc_messages
 ",
     }
-    exec{'update_locale':
+    exec{"update_locale_$lang":
       command => "/usr/sbin/locale-gen $lang",
       subscribe => File['/etc/default/locale'],
+      unless => "/usr/bin/locale -a | /bin/grep -i $lang",
     }
 }
