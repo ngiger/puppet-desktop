@@ -35,14 +35,15 @@ describe 'desktop' do
   context 'when running with changed parameters' do
     it { should compile }
     it { should compile.with_all_deps }
-    it { should contain_exec('update_locale') }
+    it { should contain_exec('update_locale_de_CH.UTF8') }
     it { should_not contain_package('lyx') }
     it { should_not contain_package('awesome') }
     it { should contain_package('gdm') }
     it { should contain_package('slim') }
     it { should contain_package('scribus') }
     it { should contain_file('/etc/default/locale').with_content(/#\s*managed by puppet/i) }
-    it { should contain_file('/etc/default/locale').with_content(/LANG='de_CH.UTF-8'
+    it { should contain_file('/etc/default/locale').with_content(/
+LANG='de_CH.UTF8'
 LANGUAGE=de_CH
 LC_MESSAGES=POSIX
 /) }
