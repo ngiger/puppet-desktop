@@ -41,7 +41,7 @@
 #   https://help.ubuntu.com/14.04/installation-guide/i386/preseed-contents.html
 #   https://help.ubuntu.com/14.04/installation-guide/amd64/apbs02.html
 class desktop(
-  $ensure = false,
+  $ensure           = false,
   $display_manager  = 'kdm',
   $window_manager   = 'awesome',
   $language         = 'de_CH',
@@ -95,7 +95,6 @@ class desktop(
       'nemo',
       'openjdk-7-jdk',
     ]
-    }
     file{'/etc/default/locale':
       content => "# managed by puppet/desktop/manifests/init.pp
 LANG='$lang'
@@ -108,4 +107,5 @@ LC_MESSAGES=$lc_messages
       subscribe => File['/etc/default/locale'],
       unless => "/usr/bin/locale -a | /bin/grep -i $lang",
     }
+  }
 }

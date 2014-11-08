@@ -4,6 +4,9 @@
 # I prefer to minimize the use of hieradata for unit tests
 # Here all values are set to different value than the default to allow a good rspec
 desktop::ensure: true
+desktop::language:  'fr_CH'
+desktop::lang:      'fr_CH.UTF8'
+desktop::lc_messages: ""
 desktop::desktop_packages: ['scribus']
 desktop::display_manager: ['gdm']
 desktop::window_manager: ['slim']
